@@ -1,0 +1,7 @@
+{
+  "listen_host": "0.0.0.0",
+  "listen_port": 8443,
+  "loot_dir": "loot",
+  "shared_token": "DSW-11fba53a2b10af78929089d2dd6d01b9",
+  "max_body_bytes": 8388608
+}

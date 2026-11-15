@@ -1,0 +1,36 @@
+name: build-kexploit
+
+on:
+  workflow_dispatch:   # 手动触发
+  push:
+    paths:
+      - "kexploit/**"
+      - "Makefile"
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ldid
+        run: brew install ldid
+
+      - name: Build
+        run: |
+          make kexploit SDK=iphoneos
+          ldid -Skexploit/entitlements.plist build/kexploit
+          file build/kexploit
+          ls -la build/
+
+      - name: Verify signature
+        run: |
+          codesign -dv build/kexploit 2>&1 || true
+          ldid -e build/kexploit | head -20
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kexploit-arm64-signed
+          path: build/kexploit
+          retention-days: 30

